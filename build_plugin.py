@@ -34,6 +34,15 @@ def GetOutputFilename(uplugin, engine_ver):
         print ("ERROR: Log directory not specified in configuration (log_dir): ")
         sys.exit()
     
+    log_dir = config["log_dir"]
+    if not os.path.exists(log_dir):
+        os.mkdir(log_dir)
+    else:
+        # Make sure this is not a file
+        if os.path.isfile(log_dir):
+            print ("ERROR: config log_dir points to an existing file. It should point to a directory: ", log_dir)
+            sys.exit()
+    
     basename = os.path.basename(uplugin)
     plugin_name = os.path.splitext(basename)[0]
     log_filename = "%s/BuildLog.%s.%s.log" % (config["log_dir"], plugin_name, engine_ver)
