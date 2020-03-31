@@ -13,5 +13,6 @@
 		"4.22" : "D:/gamedev/build_system/ue4/builds/4.22"
 	},
 	
-	"log_dir": "D:/gamedev/build_system/ue4/logs"
+	"log_dir": "D:/gamedev/build_system/ue4/logs",
+	"uat_path": "Engine/Build/BatchFiles/RunUAT.bat"
 }
