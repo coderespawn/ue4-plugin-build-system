@@ -29,6 +29,10 @@ def ExtractEngineVersion(uplugin):
         dot_idx = full_ver.rfind('.')
         return full_ver[:dot_idx]
 
+def GetPluginName(uplugin):
+    basename = os.path.basename(uplugin)
+    return os.path.splitext(basename)[0]
+
 def GetOutputFilename(uplugin, engine_ver):
     if not "log_dir" in config.keys():
         print ("ERROR: Log directory not specified in configuration (log_dir): ")
@@ -43,11 +47,20 @@ def GetOutputFilename(uplugin, engine_ver):
             print ("ERROR: config log_dir points to an existing file. It should point to a directory: ", log_dir)
             sys.exit()
     
-    basename = os.path.basename(uplugin)
-    plugin_name = os.path.splitext(basename)[0]
+    plugin_name = GetPluginName(uplugin)
     log_filename = "%s/BuildLog.%s.%s.log" % (config["log_dir"], plugin_name, engine_ver)
     log_filename = os.path.abspath(log_filename)
     return log_filename
+
+
+
+def GetStagingDir(engine_ver, uplugin):
+    plugin_name = GetPluginName(uplugin)
+    staging = config["staging_paths"][engine_ver]
+    staging_path = os.path.join(staging, plugin_name)
+    staging_path = os.path.abspath(staging_path)
+    return staging_path
+    
 
 if args.find_descriptor:
     search_dir = args.uplugin
@@ -78,7 +91,7 @@ if not "uat_path" in config.keys():
     sys.exit()
 
 
-staging = config["staging_paths"][engine_ver]
+staging = GetStagingDir(engine_ver, uplugin)
 engine_path = config["engine_paths"][engine_ver]
 run_uat = os.path.join(engine_path, config["uat_path"])
 
@@ -105,7 +118,7 @@ process = subprocess.Popen([
     stderr=subprocess.STDOUT)
     
 log_filename = GetOutputFilename(uplugin, engine_ver)
-with open(log_filename, 'w', newline=os.linesep) as logfile:
+with open(log_filename, 'w', newline="\n") as logfile:
     for line in process.stdout:
         line_string = line.decode('utf-8')
         sys.stdout.write(line_string)
