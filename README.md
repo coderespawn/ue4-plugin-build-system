@@ -11,6 +11,17 @@ Create an environment variable ``BUILD_UE4_PLUGIN`` and assign it to the absolut
 
 Copy over the config template file ``config.template.json`` to ``config.json`` and update the values according to your engine paths in your filesystem
 
+### engine_paths
+List of engine verions and their base path in the file system. Add more versions to the list as needed
+
+### staging_directory
+This creates a staging directory for each engine version.   All you plugins for this version go under this. Add more versions to this list as needed
+
+### log_dir
+The directory to save the build log files
+
+### uat_path
+The relative path to the RunUAT script that comes with the engine. This path is usually fixed in the engine and you won't need to change it.  However, the template has a reference to the batch file (RunUAT.bat) which is used in windows.  If you are on Mac or Linux, you'll want to change this to **RunUAT.sh**
 
 Project Setup Instructions
 --------------------------
