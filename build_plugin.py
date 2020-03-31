@@ -3,7 +3,8 @@ import argparse
 import sys
 import os
 import subprocess
-
+import shutil
+import datetime
 
 def ParseArgs():
     argparser = argparse.ArgumentParser()
@@ -33,7 +34,7 @@ def GetPluginName(uplugin):
     basename = os.path.basename(uplugin)
     return os.path.splitext(basename)[0]
 
-def GetOutputFilename(uplugin, engine_ver):
+def GetLogFilename(uplugin, engine_ver):
     if not "log_dir" in config.keys():
         print ("ERROR: Log directory not specified in configuration (log_dir): ")
         sys.exit()
@@ -50,7 +51,12 @@ def GetOutputFilename(uplugin, engine_ver):
     plugin_name = GetPluginName(uplugin)
     log_filename = "%s/BuildLog.%s.%s.log" % (config["log_dir"], plugin_name, engine_ver)
     log_filename = os.path.abspath(log_filename)
-    return log_filename
+    
+    time = str(datetime.datetime.now()).replace(' ', '_').replace(':', '-')
+    timestamped_log_filename = "%s/BuildLog.%s.%s_%s.log" % (config["log_dir"], plugin_name, engine_ver, time)
+    timestamped_log_filename = os.path.abspath(timestamped_log_filename)
+
+    return log_filename, timestamped_log_filename
 
 
 
@@ -107,6 +113,7 @@ print ("Staging:", staging)
 #print ("UAT:", run_uat)
 print ("------------------------------------")
 
+log_filename, timestamped_log_filename = GetLogFilename(uplugin, engine_ver)
 
 process = subprocess.Popen([
     run_uat,
@@ -117,7 +124,6 @@ process = subprocess.Popen([
     stdout=subprocess.PIPE,
     stderr=subprocess.STDOUT)
     
-log_filename = GetOutputFilename(uplugin, engine_ver)
 with open(log_filename, 'w', newline="\n") as logfile:
     for line in process.stdout:
         line_string = line.decode('utf-8')
@@ -125,5 +131,8 @@ with open(log_filename, 'w', newline="\n") as logfile:
         logfile.write(line_string)
 
 process.wait()
+
+# Copy over the log file to a timestamped filename
+shutil.copyfile(log_filename, timestamped_log_filename)
 
 print ("Compilation complete")
