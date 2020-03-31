@@ -1,0 +1,17 @@
+{
+	"engine_paths": {
+		"4.25" : "D:/Games/UE_4.25",
+		"4.24" : "D:/Program Files/Epic Games/UE_4.24",
+		"4.23" : "D:/Games/UE_4.23",
+		"4.22" : "D:/Program Files/Epic Games/UE_4.22"
+	},
+	
+	"staging_paths": {
+		"4.25" : "D:/gamedev/build_system/ue4/builds/4.25",
+		"4.24" : "D:/gamedev/build_system/ue4/builds/4.24",
+		"4.23" : "D:/gamedev/build_system/ue4/builds/4.23",
+		"4.22" : "D:/gamedev/build_system/ue4/builds/4.22"
+	},
+	
+	"log_dir": "D:/gamedev/build_system/ue4/logs"
+}
