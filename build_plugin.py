@@ -9,6 +9,7 @@ import datetime
 def ParseArgs():
     argparser = argparse.ArgumentParser()
     argparser.add_argument("uplugin", help="Path to the .uplugin Plugin descriptor. Or directory containting the uplugin file (if --find_descriptor is specified)", type=str)
+    argparser.add_argument("--platform", "-p", help="Platform to compile on, Separate multiple platforms with a + symbol", type=str, default="Win64")
     argparser.add_argument("--find_descriptor", help="Finds the descriptor in the given path.  uplugin will contain the directory to search the *.uplugin file", action="store_true")
     return argparser.parse_args()
 
@@ -99,7 +100,8 @@ if not "uat_path" in config.keys():
 
 staging = GetStagingDir(engine_ver, uplugin)
 engine_path = config["engine_paths"][engine_ver]
-run_uat = os.path.join(engine_path, config["uat_path"])
+run_uat = os.path.abspath(os.path.join(engine_path, config["uat_path"]))
+target_platforms = args.platform or config["target_platforms"]
 
 if not os.path.exists(run_uat):
     print ("ERROR: Invalid UAT file path:", run_uat)
@@ -107,10 +109,11 @@ if not os.path.exists(run_uat):
 
 
 print ("------------------------------------")
-print ("Engine:", engine_ver)
-print ("Plugin:", uplugin)
-print ("Staging:", staging)
-#print ("UAT:", run_uat)
+print ("Engine:   ", engine_ver)
+print ("Plugin:   ", uplugin)
+print ("Staging:  ", staging)
+print ("UAT:      ", run_uat)
+print ("Platform: ", target_platforms)
 print ("------------------------------------")
 
 log_filename, timestamped_log_filename = GetLogFilename(uplugin, engine_ver)
@@ -120,7 +123,9 @@ process = subprocess.Popen([
     'BuildPlugin',
     '-Plugin=%s' % uplugin, 
     '-Package=%s' % staging,
-    '-Rocket'],
+    '-Rocket',
+    '-TargetPlatforms=%s' % target_platforms
+    ],
     stdout=subprocess.PIPE,
     stderr=subprocess.STDOUT)
     

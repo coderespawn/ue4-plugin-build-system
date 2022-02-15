@@ -14,5 +14,6 @@
 	},
 	
 	"log_dir": "D:/gamedev/build_system/ue4/logs",
-	"uat_path": "Engine/Build/BatchFiles/RunUAT.bat"
+	"uat_path": "Engine/Build/BatchFiles/RunUAT.bat",
+	"target_platforms": "Win64+Win32"
 }
