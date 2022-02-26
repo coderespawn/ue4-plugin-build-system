@@ -24,12 +24,26 @@ def LoadConfig():
 args = ParseArgs()
 config = LoadConfig()
 
+def FilterVersionNumber(version):
+    dot_idx = version.rfind('.')
+    if dot_idx < 0:
+        return version
+    if version.rfind('.', 0, dot_idx) < 0:
+        # Only one dot in this version
+        return version
+    
+    return version[:dot_idx]
+
 def ExtractEngineVersion(uplugin):
     with open(uplugin, "r") as f:
         plugin_desc = json.load(f)
         full_ver = plugin_desc["EngineVersion"]
-        dot_idx = full_ver.rfind('.')
-        return full_ver[:dot_idx]
+        return FilterVersionNumber(full_ver)
+
+def ExtractPluginVersion(uplugin):
+    with open(uplugin, "r") as f:
+        plugin_desc = json.load(f)
+        return plugin_desc["VersionName"]
 
 def GetPluginName(uplugin):
     basename = os.path.basename(uplugin)
@@ -84,6 +98,7 @@ if not uplugin.endswith(".uplugin") or not os.path.exists(uplugin):
 
 uplugin = os.path.abspath(uplugin)
 engine_ver = ExtractEngineVersion(uplugin)
+plugin_ver = ExtractPluginVersion(uplugin)
 
 if not engine_ver in config["engine_paths"].keys():
     print ("ERROR: Unregistered engine path: ", engine_ver)
@@ -109,11 +124,12 @@ if not os.path.exists(run_uat):
 
 
 print ("------------------------------------")
-print ("Engine:   ", engine_ver)
-print ("Plugin:   ", uplugin)
-print ("Staging:  ", staging)
-print ("UAT:      ", run_uat)
-print ("Platform: ", target_platforms)
+print ("Engine ver: ", engine_ver)
+print ("Plugin ver: ", plugin_ver)
+print ("Plugin:     ", uplugin)
+print ("Staging:    ", staging)
+print ("UAT:        ", run_uat)
+print ("Platform:   ", target_platforms)
 print ("------------------------------------")
 
 log_filename, timestamped_log_filename = GetLogFilename(uplugin, engine_ver)
